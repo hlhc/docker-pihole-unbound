@@ -1,4 +1,5 @@
-FROM pihole/pihole:2025.11.1
+FROM pihole/pihole:2026.02.0
+RUN apk update && apk add unbound
 
 ARG S6_OVERLAY_VERSION=3.2.2.0
 ARG PIHOLE_UID=1000

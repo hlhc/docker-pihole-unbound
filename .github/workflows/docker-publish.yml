@@ -20,13 +20,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.8.2
+        uses: sigstore/cosign-installer@v4.0.0
         with:
           cosign-release: 'v2.2.4'
 
@@ -42,7 +42,7 @@ jobs:
       
       - name: Login to Github Container Registry (GHCR)
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3.4.0
+        uses: docker/login-action@v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -63,7 +63,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v5.7.0
+        uses: docker/metadata-action@v5.10.0
         with:
           # List of Docker images to use as base name for tags
           images: |
@@ -91,7 +91,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.2
         with:
           context: docker/
           push: ${{ github.event_name != 'pull_request' }}
@@ -118,7 +118,7 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
 
-      - uses: softprops/action-gh-release@v2.2.2
+      - uses: softprops/action-gh-release@v2.5.0
         with:
           tag_name: ${{ steps.extract-version.outputs.PIHOLE_VERSION }}
           body: |
