@@ -1,0 +1,13 @@
+#!/bin/sh
+# $1 = exit code from run script
+# $2 = signal that killed run (256 = exited normally without a signal)
+
+# If s6 killed us with a signal (e.g. SIGTERM during container stop), do nothing —
+# s6 is already handling shutdown.
+if [ "$2" -ne 256 ]; then
+    exit 0
+fi
+
+# start.sh exited on its own (unexpected crash) — halt the container
+echo "  [!] pihole/start.sh exited unexpectedly with code $1 — stopping container"
+exec s6-svscanctl -t /run/service
